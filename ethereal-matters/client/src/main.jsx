@@ -8,7 +8,10 @@ import Project from './pages/Project.jsx';
 import About from './pages/About.jsx';
 import Services from './pages/Services.jsx';
 import Contact from './pages/Contact.jsx';
-import '@fontsource/tilt-neon/latin-400.css'; // neon-tube font for the showreel, self-hosted
+import '@fontsource/courier-prime/latin-400.css'; // typewriter font for the whole site, self-hosted
+import '@fontsource/courier-prime/latin-700.css';
+import '@fontsource/courier-prime/latin-400-italic.css';
+import '@fontsource/tilt-neon/latin-400.css'; // neon-tube font for the showreel and neon signs
 import './styles.css';
 
 function NotFound() {

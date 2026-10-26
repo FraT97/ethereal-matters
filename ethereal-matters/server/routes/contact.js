@@ -9,11 +9,11 @@ const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 5, standardHeaders: t
 // POST /api/contact — store an enquiry
 router.post('/', limiter, async (req, res, next) => {
   try {
-    const { name, email, eventType, eventDate, place, message, website } = req.body || {};
+    const { name, email, eventType, eventDate, place, setting, guests, service, message, website } = req.body || {};
     // honeypot: bots fill the hidden "website" field
     if (website) return res.status(201).json({ ok: true });
 
-    const doc = await Message.create({ name, email, eventType, eventDate, place, message });
+    const doc = await Message.create({ name, email, eventType, eventDate, place, setting, guests, service, message });
     res.status(201).json({ ok: true, id: doc._id });
   } catch (err) {
     if (err.name === 'ValidationError') {

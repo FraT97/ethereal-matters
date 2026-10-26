@@ -1,7 +1,6 @@
 import { NavLink, Link, Outlet, useLocation } from 'react-router-dom';
 import { useCallback, useEffect, useState } from 'react';
 import Showreel, { openShowreel } from './Showreel.jsx';
-import Wisp from './Wisp.jsx';
 import ThemeToggle from './ThemeToggle.jsx';
 
 const SOCIALS = [
@@ -150,7 +149,6 @@ export default function Layout() {
       </footer>
 
       {reel && <Showreel origin={reel} onClose={closeReel} />}
-      <Wisp />
     </>
   );
 }

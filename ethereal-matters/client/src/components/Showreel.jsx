@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import Lumo from './Lumo.jsx';
 import Scene from './Scene.jsx';
 import { getProjects } from '../lib/api.js';
 import { SHOWREEL_URL, categoryLabel } from '../lib/labels.js';
@@ -32,8 +31,6 @@ export default function Showreel({ origin, onClose }) {
   const [playing, setPlaying] = useState(false);
   const [time, setTime] = useState(0); // ms
   const [duration, setDuration] = useState(0);
-  const [mood, setMood] = useState('wow');
-  const [bubble, setBubble] = useState('Lights down…');
   const [idle, setIdle] = useState(false); // controls fade away while the reel plays untouched
   const videoRef = useRef(null);
   const closeRef = useRef(null);
@@ -78,8 +75,6 @@ export default function Showreel({ origin, onClose }) {
   useEffect(() => {
     if (phase !== 'countdown') return;
     if (count >= COUNTDOWN.length) return start();
-    setMood('wow');
-    setBubble(count === 0 ? 'Lights down…' : '');
     const t = setTimeout(() => setCount((c) => c + 1), 650);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -87,8 +82,6 @@ export default function Showreel({ origin, onClose }) {
 
   function start() {
     setPhase('play');
-    setBubble('');
-    setMood('happy');
     setPlaying(true);
     if (MODE === 'video') videoRef.current?.play().catch(() => setPlaying(false));
   }
@@ -113,21 +106,6 @@ export default function Showreel({ origin, onClose }) {
     return () => cancelAnimationFrame(raf);
   }, [playing, duration]);
 
-  // Lumo reacts to every cut
-  useEffect(() => {
-    if (phase !== 'play' || !shots.length) return;
-    setMood('wow');
-    const t = setTimeout(() => setMood('happy'), 550);
-    return () => clearTimeout(t);
-  }, [shotIndex, phase, shots.length]);
-
-  useEffect(() => {
-    if (phase === 'end') {
-      setMood('happy');
-      setBubble('Again? Again!');
-    }
-  }, [phase]);
-
   const seek = useCallback(
     (ms) => {
       const v = Math.max(0, Math.min(duration, ms));
@@ -144,15 +122,12 @@ export default function Showreel({ origin, onClose }) {
     if (phase === 'end') {
       seek(0);
       setPhase('play');
-      setBubble('');
       setPlaying(true);
       if (MODE === 'video') videoRef.current?.play();
       return;
     }
     const next = !playing;
     setPlaying(next);
-    setMood(next ? 'happy' : 'idle');
-    setBubble(next ? '' : 'Paused. I’ll wait.');
     if (MODE === 'video') next ? videoRef.current?.play() : videoRef.current?.pause();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, playing, seek]);
@@ -160,8 +135,6 @@ export default function Showreel({ origin, onClose }) {
   const close = useCallback(() => {
     setPlaying(false);
     videoRef.current?.pause();
-    setMood('sleep');
-    setBubble('');
     setPhase('closing');
     setTimeout(onClose, reduce ? 0 : 550);
   }, [onClose, reduce]);
@@ -285,7 +258,7 @@ export default function Showreel({ origin, onClose }) {
         )}
       </div>
 
-      {/* ---------- Lumo + controls ---------- */}
+      {/* ---------- controls ---------- */}
       <div className={`reel-controls ${MODE === 'embed' ? 'is-embed' : ''}`}>
         {MODE !== 'embed' && (
           <button className="reel-play" onClick={toggle} aria-label={playing ? 'Pause' : 'Play'}>
@@ -317,14 +290,7 @@ export default function Showreel({ origin, onClose }) {
               ))}
             </>
           )}
-          {/* Lumo rides the timeline */}
-          <div
-            className={`reel-rider wisp mood-${mood} ${playing ? 'is-riding' : ''}`}
-            style={{ left: MODE === 'embed' ? '50%' : `${progress * 100}%` }}
-          >
-            <Lumo mood={mood} look={playing ? { x: 0, y: -2.2 } : { x: 0, y: 0 }} />
-            {bubble && <span className="reel-bubble" role="status">{bubble}</span>}
-          </div>
+          {MODE !== 'embed' && <span className="reel-head" style={{ left: `${progress * 100}%` }} aria-hidden="true" />}
         </div>
 
         {MODE !== 'embed' && <span className="reel-time">{fmt(time)} / {fmt(duration)}</span>}

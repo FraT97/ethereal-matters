@@ -64,7 +64,7 @@ Se il frontend va su un host separato (es. Vercel), imposta `VITE_API_URL` con l
 ## Design
 
 - Palette: `--night #03191C`, `--deep #072A2E`, `--cyan #4FE3DA`, `--moss #7EE08A`, `--mist #D7EEE9`.
-- Font: Archivo (versione larga per i titoli).
+- Font: Courier Prime (macchina da scrivere) per tutto il sito; Tilt Neon per showreel e scritte al neon. Entrambi inclusi nel sito (@fontsource), niente Google Fonts.
 - Struttura ispirata a silasveta.com: slider a tutto schermo dei lavori in evidenza, home centrata sui
   lavori con tab per tipo di evento, pannello filtri, vista griglia/lista e "Show more".
 - Le luci animate seguono il puntatore; con "riduci movimento" attivo lo slider non scorre da solo.
@@ -72,24 +72,15 @@ Se il frontend va su un host separato (es. Vercel), imposta `VITE_API_URL` con l
 ## Header
 
 - Lampadina = tema chiaro/scuro (`ThemeToggle.jsx`, scelta salvata nel browser; `public/theme-init.js` la applica prima del caricamento).
-- Burger a tre tubi LED e menu a tutto schermo sul telefono; l'header si nasconde scorrendo in giù.
-
-## Lumo, il personaggio
-
-`client/src/components/Wisp.jsx` — uno spirito di luce (fuoco fatuo) originale:
-- **Desktop:** segue il cursore con un leggero ritardo, gli occhi guardano il puntatore, diventa verde e sorride
-  sopra link e bottoni, fa scintille al click, si addormenta (zZ) dopo 9 secondi di inattività.
-- **Telefono:** (`ScrollWisp.jsx`) scorre su una sottile linea di luce sul bordo destro e fa da barra di scorrimento:
-  guarda dove scorri, si emoziona se vai veloce, si addormenta se ti fermi, saluta in fondo alla pagina;
-  toccandolo torni in cima (frasi in `LINES`). Per toglierlo basta rimuovere `<Wisp />` da `Layout.jsx`.
+- Burger a tre tubi LED e menu a tutto schermo sul telefono; l'header resta sempre in alto.
 
 ## Showreel
 
 `client/src/components/Showreel.jsx` — si apre da "Showreel" nel menu o da "Play showreel" nello slider
 (da codice: `openShowreel(event)`).
 - Si apre con un'iride di buio che parte dal bottone cliccato, poi conto alla rovescia 3-2-1.
-- Lumo cavalca la barra di avanzamento, si stupisce a ogni taglio, aspetta se metti in pausa,
-  e alla fine chiede "Again?". "Lights on" chiude con l'iride al contrario.
+- Titoli in font neon (Tilt Neon) che si accendono tremolando; i controlli fluttuano sull'immagine e spariscono
+  dopo qualche secondo. "Lights on" chiude con l'iride al contrario.
 - **Senza video** (`SHOWREEL_URL` vuoto) suona un trailer generato dai lavori in evidenza.
-- **Con un .mp4/.webm** usa gli stessi controlli personalizzati; con un embed Vimeo/YouTube Lumo resta a guardare.
+- **Con un .mp4/.webm** usa gli stessi controlli personalizzati; con un embed Vimeo/YouTube si usano i controlli del player.
 - Tasti: spazio = play/pausa, ← → = taglio precedente/successivo, Esc = chiudi.
