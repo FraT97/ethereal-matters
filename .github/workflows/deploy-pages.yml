@@ -1,4 +1,6 @@
 # Builds the React site and publishes it on GitHub Pages.
+# Lives in the repo root: .github/workflows/deploy-pages.yml
+# The project itself is in the ethereal-matters/ subfolder.
 # GitHub Pages can't run the Node/Mongo server, so the site shows the example
 # projects (client/src/lib/fallback.js) and the contact form won't save messages.
 name: Deploy to GitHub Pages
@@ -20,18 +22,19 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ethereal-matters/client
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: client/package-lock.json
+          cache-dependency-path: ethereal-matters/client/package-lock.json
       - name: Install
-        working-directory: client
         run: npm ci
       - name: Build
-        working-directory: client
         env:
           VITE_BASE: /${{ github.event.repository.name }}/
         run: |
@@ -39,7 +42,7 @@ jobs:
           cp dist/index.html dist/404.html
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: client/dist
+          path: ethereal-matters/client/dist
 
   deploy:
     needs: build
