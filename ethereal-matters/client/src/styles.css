@@ -684,3 +684,16 @@ body { font-size: 1.0625rem; line-height: 1.6; }
   .tagline p { font-size: clamp(1.7rem, 8vw, 2.3rem); }
   .nav-links a, .nav-btn { font-size: clamp(2rem, 10vw, 2.8rem); }
 }
+
+/* ---------- Logo ---------- */
+.wordmark img { width: 36px; height: 36px; border-radius: 3px; display: block; }
+.footer-logo { width: 120px; height: 120px; margin-bottom: 2.4rem; border-radius: 4px; }
+/* showreel title card: the logo powers on like a sign before the name */
+.reel-logo { width: clamp(120px, 22vmin, 200px); height: auto; margin: 0 auto 1.6rem; display: block; animation: logo-on 1.6s steps(1) both, logo-glow 1.6s ease both; }
+@keyframes logo-on { 0% { opacity: 0; } 10% { opacity: 1; } 14% { opacity: .1; } 22% { opacity: 1; } 27% { opacity: .3; } 31% { opacity: 1; } }
+@keyframes logo-glow { from { filter: brightness(1.8) drop-shadow(0 0 30px rgba(255,255,255,.4)); } to { filter: none; } }
+@media (max-width: 760px) { .wordmark img { width: 32px; height: 32px; } }
+
+/* Name next to the logo: worn typewriter capitals, matching the grain of the logo */
+.wordmark span { font-family: 'Special Elite', var(--font); font-weight: 400; text-transform: uppercase; letter-spacing: 0.14em; font-size: 1.05rem; }
+@media (max-width: 760px) { .wordmark span { font-size: 0.9rem; letter-spacing: 0.1em; } }

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Scene from './Scene.jsx';
+import logo from '../assets/logo.webp';
 import { getProjects } from '../lib/api.js';
 import { SHOWREEL_URL, categoryLabel } from '../lib/labels.js';
 
@@ -228,6 +229,7 @@ export default function Showreel({ origin, onClose }) {
             )}
             {shot.kind === 'title' && (
               <div className="reel-card">
+                <img className="reel-logo" src={logo} alt="" />
                 <h2 className="reel-wordmark">
                   {'ethereal matters'.split('').map((ch, i) => (
                     <span key={i} style={{ '--i': i }}>{ch === ' ' ? ' ' : ch}</span>

@@ -2,6 +2,7 @@ import { NavLink, Link, Outlet, useLocation } from 'react-router-dom';
 import { useCallback, useEffect, useState } from 'react';
 import Showreel, { openShowreel } from './Showreel.jsx';
 import ThemeToggle from './ThemeToggle.jsx';
+import logo from '../assets/logo.webp';
 
 const SOCIALS = [
   { label: 'Instagram', href: 'https://instagram.com' },
@@ -82,12 +83,8 @@ export default function Layout() {
       <a className="skip" href="#main">Skip to content</a>
       <header className={headerClass}>
         <Link to="/" className="wordmark" aria-label="Ethereal Matters, home">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="12" cy="9" r="4.5" />
-            <path d="M5 18.5h14" />
-            <path d="M8 21.5h8" opacity=".5" />
-          </svg>
-          ethereal matters
+          <img src={logo} alt="" width="36" height="36" />
+          <span>ethereal matters</span>
         </Link>
         <div className="header-actions">
           <ThemeToggle />
@@ -128,6 +125,7 @@ export default function Layout() {
       </main>
 
       <footer className="site-footer">
+        <img className="footer-logo" src={logo} alt="Ethereal Matters logo" width="120" height="120" loading="lazy" />
         <div className="footer-cols">
           <div>
             <h2>Contact us</h2>

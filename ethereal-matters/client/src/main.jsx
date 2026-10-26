@@ -11,6 +11,7 @@ import Contact from './pages/Contact.jsx';
 import '@fontsource/courier-prime/latin-400.css'; // typewriter font for the whole site, self-hosted
 import '@fontsource/courier-prime/latin-700.css';
 import '@fontsource/courier-prime/latin-400-italic.css';
+import '@fontsource/special-elite/latin-400.css'; // worn typewriter font for the name next to the logo
 import '@fontsource/tilt-neon/latin-400.css'; // neon-tube font for the showreel and neon signs
 import './styles.css';
 
