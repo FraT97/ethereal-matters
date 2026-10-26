@@ -382,7 +382,6 @@ body.menu-open .wisp.is-rider, body.menu-open .lumo-rail { opacity: 0; pointer-e
 
 .reel {
   position: fixed; inset: 0; z-index: 70; background: #010809; color: var(--mist);
-  display: grid; grid-template-rows: 1fr auto;
   clip-path: circle(0 at var(--ox) var(--oy));
   animation: iris-open .65s cubic-bezier(.7,0,.2,1) forwards;
 }
@@ -398,7 +397,9 @@ body.menu-open .wisp.is-rider, body.menu-open .lumo-rail { opacity: 0; pointer-e
 .reel-close::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--moss); box-shadow: 0 0 10px var(--moss); }
 .reel-close:hover { border-color: var(--moss); }
 
-.reel-stage { position: relative; overflow: hidden; cursor: pointer; }
+.reel-stage { position: absolute; inset: 0; overflow: hidden; cursor: pointer; }
+/* one soft vignette over the whole picture instead of a separate control strip */
+.reel-stage::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(130% 100% at 50% 35%, transparent 55%, rgba(1,8,9,.75) 100%); }
 .reel-stage video, .reel-stage iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; object-fit: contain; background: #000; }
 .reel-shot { position: absolute; inset: 0; animation: shot-in .5s ease both; }
 @keyframes shot-in { from { opacity: 0; filter: brightness(2.2) blur(6px); } }
@@ -433,8 +434,8 @@ body.menu-open .wisp.is-rider, body.menu-open .lumo-rail { opacity: 0; pointer-e
 
 .reel-end { position: absolute; left: 50%; top: 62%; transform: translateX(-50%); display: flex; gap: .6rem; flex-wrap: wrap; justify-content: center; animation: rise .5s ease .2s both; cursor: default; }
 
-.reel-controls { position: relative; display: flex; align-items: center; gap: 1.2rem; padding: 2.6rem var(--gutter) 1.4rem; background: linear-gradient(transparent, #010809 40%); }
-.reel-controls.is-embed { justify-content: center; padding-top: 4.4rem; }
+.reel-controls { position: absolute; z-index: 3; left: 0; right: 0; bottom: 0; display: flex; align-items: center; gap: 1.2rem; padding: 0 var(--gutter) max(1.4rem, env(safe-area-inset-bottom)); transition: opacity .5s; }
+.reel-controls.is-embed { justify-content: center; }
 .reel-play { flex: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: var(--deep); display: grid; place-items: center; cursor: pointer; }
 .reel-play:hover { border-color: var(--cyan); }
 .reel-play svg { width: 16px; height: 16px; fill: var(--mist); }
@@ -548,3 +549,38 @@ body:not(.header-hidden) .explorer-bar { top: 68px; }
 
 /* Safety net: nothing may push the page sideways on phones (clip keeps sticky elements working) */
 html, body { overflow-x: clip; }
+
+
+/* ---------- Showreel: floating controls + neon type ---------- */
+.reel-play, .reel-close { background: rgba(1,8,9,.35); backdrop-filter: blur(8px); }
+.reel-close { transition: opacity .5s; }
+/* controls fade while the reel plays untouched; Lumo keeps riding the line */
+.reel.is-idle .reel-play, .reel.is-idle .reel-time, .reel.is-idle .reel-close, .reel.is-idle .reel-tick { opacity: 0; }
+.reel.is-idle .reel-track-line { opacity: .35; }
+.reel.is-idle { cursor: none; }
+.reel-play, .reel-time, .reel-tick, .reel-track-line { transition: opacity .5s; }
+.reel-caption { bottom: clamp(5.5rem, 14vh, 8rem); }
+
+/* Tilt Neon: letters drawn like bent glass tubes */
+.reel-caption h2, .reel-card h2, .reel-countdown span {
+  font-family: 'Tilt Neon', var(--font); font-weight: 400; font-stretch: normal; letter-spacing: 0;
+  color: #f2fffc;
+  text-shadow: 0 0 2px #fff, 0 0 8px var(--neon, var(--cyan)), 0 0 22px var(--neon, var(--cyan)), 0 0 46px color-mix(in srgb, var(--neon, var(--cyan)) 60%, transparent);
+}
+.reel-caption h2 { line-height: 1; animation: neon-on 1.3s steps(1) .15s both, rise-soft .9s cubic-bezier(.2,.8,.2,1) .15s both; }
+.reel-card h2 { animation: neon-on 1.4s steps(1) both; }
+.reel-card h2:not(.reel-wordmark) { --neon: var(--moss); }
+.reel-wordmark span { animation: none; }
+.reel-wordmark { animation: neon-on 1.6s steps(1) .2s both; }
+.reel-num { background: transparent; color: var(--neon, var(--cyan)); border: 1px solid currentColor; box-shadow: 0 0 10px -2px currentColor; }
+.reel-countdown span { color: #f2fffc; font-size: min(26vmin, 190px); }
+/* a neon sign warming up: off, flicker, on */
+@keyframes neon-on {
+  0% { opacity: 0; } 12% { opacity: 1; } 16% { opacity: .15; } 24% { opacity: 1; }
+  30% { opacity: .35; } 34% { opacity: 1; } 60% { opacity: .85; } 62% { opacity: 1; } 100% { opacity: 1; }
+}
+@keyframes rise-soft { from { transform: translateY(18px); } }
+/* blend the scene's dark "water" band into the night so nothing reads as a strip at the bottom */
+.reel-media { -webkit-mask-image: linear-gradient(#000 62%, transparent 96%); mask-image: linear-gradient(#000 62%, transparent 96%); }
+/* in the reel, drop the scene's ground band and horizon line: the picture just fades into the night */
+.reel-media > rect:last-of-type, .reel-media > line:last-child { display: none; }

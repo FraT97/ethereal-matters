@@ -34,6 +34,7 @@ export default function Showreel({ origin, onClose }) {
   const [duration, setDuration] = useState(0);
   const [mood, setMood] = useState('wow');
   const [bubble, setBubble] = useState('Lights down…');
+  const [idle, setIdle] = useState(false); // controls fade away while the reel plays untouched
   const videoRef = useRef(null);
   const closeRef = useRef(null);
   const timeRef = useRef(0);
@@ -183,6 +184,28 @@ export default function Showreel({ origin, onClose }) {
   }, [close, toggle, seek, shots, shotIndex, shot, time]);
 
   const progress = duration ? time / duration : 0;
+  // Fade the controls out after a moment of no movement; any move or tap brings them back
+  useEffect(() => {
+    let t;
+    const wake = () => {
+      setIdle(false);
+      clearTimeout(t);
+      t = setTimeout(() => setIdle(true), 2600);
+    };
+    wake();
+    window.addEventListener('pointermove', wake);
+    window.addEventListener('pointerdown', wake);
+    window.addEventListener('keydown', wake);
+    return () => {
+      clearTimeout(t);
+      window.removeEventListener('pointermove', wake);
+      window.removeEventListener('pointerdown', wake);
+      window.removeEventListener('keydown', wake);
+    };
+  }, []);
+
+  const neon = shot?.p?.hue === 'green' ? 'var(--moss)' : 'var(--cyan)';
+
   const onTrack = (e) => {
     const r = e.currentTarget.getBoundingClientRect();
     seek(((e.clientX - r.left) / r.width) * duration);
@@ -190,7 +213,7 @@ export default function Showreel({ origin, onClose }) {
 
   return (
     <div
-      className={`reel phase-${phase}`}
+      className={`reel phase-${phase} ${idle && playing ? 'is-idle' : ''}`}
       role="dialog"
       aria-modal="true"
       aria-label="Showreel"
@@ -219,7 +242,7 @@ export default function Showreel({ origin, onClose }) {
           <iframe src={SHOWREEL_URL} title="Ethereal Matters showreel" allow="autoplay; fullscreen; picture-in-picture" allowFullScreen />
         )}
         {MODE === 'generated' && shot && (phase === 'play' || phase === 'end' || phase === 'closing') && (
-          <div className="reel-shot" key={`shot-${shotIndex}`}>
+          <div className="reel-shot" key={`shot-${shotIndex}`} style={{ '--neon': neon }}>
             {shot.kind === 'work' && (
               <>
                 <Scene project={shot.p} className="reel-media" align="xMidYMid" />

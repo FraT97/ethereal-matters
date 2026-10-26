@@ -44,10 +44,8 @@ export default function Layout() {
       requestAnimationFrame(() => {
         const y = window.scrollY;
         const delta = y - lastY;
-        if (Math.abs(delta) > 6) {
-          setHidden(delta > 0 && y > 140);
-          lastY = y;
-        }
+        // header stays on top at all times (no hide-on-scroll)
+        if (Math.abs(delta) > 6) lastY = y;
         setScrolled(y > 40);
         ticking = false;
       });
