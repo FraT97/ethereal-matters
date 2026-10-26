@@ -69,13 +69,19 @@ Se il frontend va su un host separato (es. Vercel), imposta `VITE_API_URL` con l
   lavori con tab per tipo di evento, pannello filtri, vista griglia/lista e "Show more".
 - Le luci animate seguono il puntatore; con "riduci movimento" attivo lo slider non scorre da solo.
 
+## Header
+
+- Lampadina = tema chiaro/scuro (`ThemeToggle.jsx`, scelta salvata nel browser; `public/theme-init.js` la applica prima del caricamento).
+- Burger a tre tubi LED e menu a tutto schermo sul telefono; l'header si nasconde scorrendo in giù.
+
 ## Lumo, il personaggio
 
 `client/src/components/Wisp.jsx` — uno spirito di luce (fuoco fatuo) originale:
 - **Desktop:** segue il cursore con un leggero ritardo, gli occhi guardano il puntatore, diventa verde e sorride
   sopra link e bottoni, fa scintille al click, si addormenta (zZ) dopo 9 secondi di inattività.
-- **Mobile:** resta nell'angolo in basso a destra; toccandolo dice una frase (modifica `LINES` nel file).
-- Con "riduci movimento" attivo resta fermo nell'angolo. Per toglierlo basta rimuovere `<Wisp />` da `Layout.jsx`.
+- **Telefono:** (`ScrollWisp.jsx`) scorre su una sottile linea di luce sul bordo destro e fa da barra di scorrimento:
+  guarda dove scorri, si emoziona se vai veloce, si addormenta se ti fermi, saluta in fondo alla pagina;
+  toccandolo torni in cima (frasi in `LINES`). Per toglierlo basta rimuovere `<Wisp />` da `Layout.jsx`.
 
 ## Showreel
 

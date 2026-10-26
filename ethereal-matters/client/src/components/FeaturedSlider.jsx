@@ -16,6 +16,7 @@ export default function FeaturedSlider({ projects }) {
     typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
   );
   const count = projects.length;
+  const touch = useRef({ x: 0, y: 0 });
 
   const go = useCallback((i) => setIndex(((i % count) + count) % count), [count]);
 
@@ -29,6 +30,20 @@ export default function FeaturedSlider({ projects }) {
 
   const current = projects[index];
 
+  // swipe left/right on touch screens (vertical swipes keep scrolling the page)
+  const onTouchStart = (e) => {
+    const t = e.touches[0];
+    touch.current = { x: t.clientX, y: t.clientY };
+    setPaused(true);
+  };
+  const onTouchEnd = (e) => {
+    const t = e.changedTouches[0];
+    const dx = t.clientX - touch.current.x;
+    const dy = t.clientY - touch.current.y;
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.4) go(index + (dx < 0 ? 1 : -1));
+    setPaused(false);
+  };
+
   return (
     <section
       className={`slider ${paused ? 'is-paused' : ''}`}
@@ -38,6 +53,8 @@ export default function FeaturedSlider({ projects }) {
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
       onKeyDown={(e) => {
         if (e.key === 'ArrowRight') go(index + 1);
         if (e.key === 'ArrowLeft') go(index - 1);

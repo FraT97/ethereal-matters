@@ -1,5 +1,5 @@
 import { Link, useSearchParams } from 'react-router-dom';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Scene from './Scene.jsx';
 import { getMeta, getProjects } from '../lib/api.js';
 import { CATEGORIES, SETTINGS, categoryLabel } from '../lib/labels.js';
@@ -29,6 +29,9 @@ export default function WorksExplorer() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [drawer, setDrawer] = useState(false);
+  const root = useRef(null);
+  const sentinel = useRef(null);
+  const moreRef = useRef(() => {});
 
   useEffect(() => {
     getMeta().then(setMeta).catch(() => {});
@@ -60,6 +63,42 @@ export default function WorksExplorer() {
       })
       .finally(() => setLoading(false));
   }
+
+  moreRef.current = () => {
+    if (!loading && page < pages) showMore();
+  };
+
+  // Load the next works automatically when you get near the end of the list
+  useEffect(() => {
+    const node = sentinel.current;
+    if (!node) return;
+    const io = new IntersectionObserver((entries) => entries[0].isIntersecting && moreRef.current(), {
+      rootMargin: '0px 0px 600px 0px',
+    });
+    io.observe(node);
+    return () => io.disconnect();
+  }, [page, pages]);
+
+  // Each work "switches on" as it scrolls into view
+  useEffect(() => {
+    const els = root.current?.querySelectorAll('.card:not(.is-lit), .works-table tbody tr:not(.is-lit)') || [];
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
+      els.forEach((e) => e.classList.add('is-lit'));
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((en) => {
+          if (en.isIntersecting) {
+            en.target.classList.add('is-lit');
+            io.unobserve(en.target);
+          }
+        }),
+      { threshold: 0.3, rootMargin: '0px 0px -8% 0px' }
+    );
+    els.forEach((e) => io.observe(e));
+    return () => io.disconnect();
+  }, [items, view]);
 
   function update(changes) {
     const next = new URLSearchParams(params);
@@ -93,7 +132,7 @@ export default function WorksExplorer() {
   }, [drawer]);
 
   return (
-    <section className="explorer" id="works" aria-labelledby="works-title">
+    <section className="explorer" id="works" aria-labelledby="works-title" ref={root}>
       <h2 id="works-title" className="sr-only">Works</h2>
 
       <div className="explorer-bar">
@@ -200,6 +239,7 @@ export default function WorksExplorer() {
         )
       )}
 
+      <div ref={sentinel} aria-hidden="true" />
       {page < pages && (
         <div className="more">
           <button className="btn" onClick={showMore} disabled={loading}>

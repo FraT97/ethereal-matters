@@ -1,21 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 import Lumo from './Lumo.jsx';
+import ScrollWisp from './ScrollWisp.jsx';
 
 // "Lumo" — the Ethereal Matters light spirit.
 // Desktop: floats after the pointer with a soft lag, eyes look where you point,
 //   gets excited over links/buttons, throws sparks on click, falls asleep when idle.
-// Touch: rests in the bottom corner; tap it and it says something.
-// Reduced motion: stays still in the corner.
+// Touch screens and reduced motion: see ScrollWisp (rides the scroll on the right edge).
 
-const LINES = [
-  'I only come out after sunset.',
-  'Psst — try the filters.',
-  'I was born on a lake.',
-  'Fog is my favourite weather.',
-  'We leave the place dark. I stay.',
-  'Have a field? I want to see it.',
-];
 const SLEEP_AFTER = 9000;
 
 export default function Wisp() {
@@ -23,17 +14,7 @@ export default function Wisp() {
   const pupils = useRef(null);
   const [mood, setMood] = useState('idle'); // idle | happy | sleep | wow
   const [sparks, setSparks] = useState([]);
-  const [line, setLine] = useState('');
   const [mode, setMode] = useState('follow'); // follow | rest
-  const { pathname } = useLocation();
-
-  // Say hello on page change
-  useEffect(() => {
-    if (mode !== 'rest') return;
-    setMood('wow');
-    const t = setTimeout(() => setMood('idle'), 900);
-    return () => clearTimeout(t);
-  }, [pathname, mode]);
 
   useEffect(() => {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -140,16 +121,6 @@ export default function Wisp() {
     };
   }, []);
 
-  function talk() {
-    const next = LINES[Math.floor(Math.random() * LINES.length)];
-    setLine(next);
-    setMood('happy');
-    setTimeout(() => {
-      setLine('');
-      setMood('idle');
-    }, 2600);
-  }
-
   const body = <Lumo mood={mood} pupilsRef={pupils} />;
 
   return (
@@ -160,10 +131,7 @@ export default function Wisp() {
           {mood === 'sleep' && <span className="wisp-z">z<span>z</span></span>}
         </div>
       ) : (
-        <button className={`wisp is-rest mood-${mood}`} onClick={talk} aria-label="Lumo, the Ethereal Matters light spirit. Tap to say hi.">
-          {body}
-          {line && <span className="wisp-bubble" role="status">{line}</span>}
-        </button>
+        <ScrollWisp />
       )}
       {sparks.map((s) => (
         <span
